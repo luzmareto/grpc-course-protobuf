@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
-	"grp-course-protobuf/pb/user"
+	"errors"
+	"grp-course-protobuf/pb/chat"
+	"io"
 	"log"
 
 	"google.golang.org/grpc"
@@ -16,21 +18,23 @@ func main() {
 		log.Fatal("failed to create client ", err)
 	}
 
-	userClient := user.NewUserServiceClient(clientConn)
-
-	response, err := userClient.CreateUser(context.Background(), &user.User{
-		Id:      1,
-		Age:     13,
-		Balance: 130000,
-		Address: &user.Address{
-			Id:          123,
-			FullAddress: "Jalan Merdeka No 123",
-			Province:    "DKI Jakarta",
-			City:        "Jakarta Selatan",
-		},
-	})
+	// client streaming
+	chatClient := chat.NewChatServiceClient(clientConn)
+	stream, err := chatClient.ReceiveMessage(context.Background(), &chat.ReceiveMessageRequest{
+		UserId: 30})
 	if err != nil {
-		log.Fatal("error calling user client", err)
+		log.Fatal("failed to send message ", err)
 	}
-	log.Println("response from server", response.Message)
+
+	for {
+		msg, err := stream.Recv()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			log.Fatal("failed to receive message ", err)
+		}
+		log.Printf("got  message to %d content %s", msg.UserId, msg.Content)
+	}
+
 }
