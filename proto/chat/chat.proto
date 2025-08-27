@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "grpc-course-protobuf/pb/chat"; //bisa diubah sesuai kebutuhan misal menggunakan github pribadi
+
+service ChatService {
+rpc SendMessage(stream ChatMessage) returns (ChatResponse); //client streaming
+rpc ReceiveMessage(ReceiveMessageRequest) returns (stream ChatMessage); //server streaming
+rpc Chat (stream ChatMessage) returns (stream ChatMessage); //bi-directional streaming
+}
+
+message ChatMessage {
+int64 user_id = 1;
+string content = 2;
+}
+
+message ChatResponse {
+string message = 1;
+}
+
+message ReceiveMessageRequest{
+    int64 user_id = 1;
+}

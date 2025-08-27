@@ -1,0 +1,13 @@
+syntax =  "proto3";
+
+package ecommerce.product;
+
+option go_package = "grpc-course-protobuf/pb/ecommerce/product"; //generate subfolder
+ 
+message Product {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int64 stock = 5; // jumlah stok produk
+}

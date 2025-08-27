@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "grpc-course-protobuf/pb/user"; //bisa diubah sesuai kebutuhan misal menggunakan github pribadi
+
+service UserService{
+    rpc CreateUser(User) returns (CreateResponse); //unary
+}
+
+// nested message untuk menyimpan alamat pengguna
+message Address {
+  int64 id = 1; 
+  string full_address = 2;
+  string province = 3;
+  string city = 4;
+}
+
+message User {
+  reserved  2; //value 2  tidak digunakan karena fullname tidak valid
+  int64 id = 1;
+//string full_name = 2;
+  int64 age = 3;
+  float balance = 4; //bisa digunakan untuk menyimpan saldo pengguna
+  bool is_active = 5; //menandakan apakah pengguna aktif atau tidak
+  Address address = 6; //menggunakan nested message Address
+  repeated string educations = 7;
+}
+
+message CreateResponse {
+  string message = 1;
+}

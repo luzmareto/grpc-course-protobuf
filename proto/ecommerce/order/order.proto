@@ -1,0 +1,13 @@
+syntax =  "proto3";
+
+package ecommerce.order;
+
+option go_package = "grpc-course-protobuf/pb/ecommerce/order"; //generate subfolder
+
+import "ecommerce/product/product.proto";
+
+message Order {
+  int64 id = 1;
+  string number = 2;
+  repeated  ecommerce.product.Product products = 3; //menggunakan array karena order bisa memiliki banyak produk
+}
