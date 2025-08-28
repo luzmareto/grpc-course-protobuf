@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"errors"
-	"grp-course-protobuf/pb/chat"
-	"io"
+	"grp-course-protobuf/pb/user"
 	"log"
 
 	"google.golang.org/grpc"
@@ -18,23 +16,36 @@ func main() {
 		log.Fatal("failed to create client ", err)
 	}
 
-	// client streaming
-	chatClient := chat.NewChatServiceClient(clientConn)
-	stream, err := chatClient.ReceiveMessage(context.Background(), &chat.ReceiveMessageRequest{
-		UserId: 30})
+	// bidirectional streaming
+	userClient := user.NewUserServiceClient(clientConn)
+	res, err := userClient.CreateUser(context.Background(), &user.User{
+		Age: -1,
+	})
 	if err != nil {
-		log.Fatal("failed to send message ", err)
-	}
+		// st, ok := status.FromError(err)
+		// if ok {
+		// 	// error berasal dari grpc
+		// 	if st.Code() == codes.InvalidArgument {
+		// 		log.Println("there is validation error ", st.Message())
+		// 	} else if st.Code() == codes.Unknown {
+		// 		log.Println("there is Unknown error ", st.Message())
+		// 	} else if st.Code() == codes.Internal {
+		// 		log.Println("there is Internal error ", st.Message())
+		// 	}
+		// 	return
+		// }
 
-	for {
-		msg, err := stream.Recv()
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				break
-			}
-			log.Fatal("failed to receive message ", err)
+		log.Println("failed to send message ", err)
+		return
+	}
+	// wrap error handling
+	if !res.Base.IsSuccess {
+		if res.Base.StatusCode == 400 {
+			log.Println("there is validation error ", res.Base.message)
+		} else if res.Base.StatusCode == 500 {
+			log.Println("there is internal error ", res.Base.ResponseMessage)
 		}
-		log.Printf("got  message to %d content %s", msg.UserId, msg.Content)
+		return
 	}
-
+	log.Println("response from server ", res.Base.Message)
 }

@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"grp-course-protobuf/pb/chat"
+	"grp-course-protobuf/pb/common"
 	"grp-course-protobuf/pb/user"
 	"io"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -15,14 +17,31 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// unary
 type userService struct {
 	user.UnimplementedUserServiceServer
 }
 
 func (us *userService) CreateUser(ctx context.Context, userRequest *user.User) (*user.CreateResponse, error) {
-	log.Println("user is created")
+	// menggunakan wrapper response
+	if userRequest.Age < 1 {
+		return &user.CreateResponse{
+			Base: &common.BaseResponse{
+				StatusCode: 400,
+				IsSuccess:  false,
+				Message:    "validation error: age must be greater than 0",
+			},
+		}, nil
+	}
+	// membuat response server
+
+	log.Println("User is created")
 	return &user.CreateResponse{
-		Message: "user created",
+		Base: &common.BaseResponse{
+			StatusCode: 200,
+			IsSuccess:  true,
+			Message:    "User created",
+		},
 	}, nil
 }
 
@@ -67,9 +86,39 @@ func (cs *chatService) ReceiveMessage(req *chat.ReceiveMessageRequest, stream gr
 	return nil
 }
 
-// func (UnimplementedChatServiceServer) Chat(grpc.BidiStreamingServer[ChatMessage, ChatMessage]) error {
-// 	return status.Errorf(codes.Unimplemented, "method Chat not implemented")
-// }
+// bidirectional streaming
+func (cs *chatService) Chat(stream grpc.BidiStreamingServer[chat.ChatMessage, chat.ChatMessage]) error {
+	for {
+		msg, err := stream.Recv()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return status.Errorf(codes.Unknown, "error receiving message")
+		}
+
+		log.Printf("Got message from %d content: %s", msg.UserId, msg.Content)
+
+		time.Sleep(2 * time.Second)
+
+		err = stream.Send(&chat.ChatMessage{
+			UserId:  50,
+			Content: "Reply from server",
+		})
+		if err != nil {
+			return status.Errorf(codes.Unknown, "error sending message")
+		}
+		err = stream.Send(&chat.ChatMessage{
+			UserId:  50,
+			Content: "Reply from server #2",
+		})
+		if err != nil {
+			return status.Errorf(codes.Unknown, "error sending message")
+		}
+	}
+
+	return nil
+}
 
 func main() {
 	lis, err := net.Listen("tcp", ":8081")
