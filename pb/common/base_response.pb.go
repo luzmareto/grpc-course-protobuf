@@ -21,7 +21,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// base response untuk general response
+// response wrapper dari common/BaseResponse
 type BaseResponse struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	StatusCode       int64                  `protobuf:"varint,1,opt,name=status_code,json=statusCode,proto3" json:"status_code,omitempty"`

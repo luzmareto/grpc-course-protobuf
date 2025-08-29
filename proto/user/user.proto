@@ -4,7 +4,11 @@ package user;
 
 option go_package = "grpc-course-protobuf/pb/user"; //bisa diubah sesuai kebutuhan misal menggunakan github pribadi
 
-import "common/base_response.proto"; //import dari base response  
+import  "grpc-course-protobuf/pb/common";
+import "google/protobuf/timestamp.proto";
+
+
+
 
 /* contoh perintah generate
   protoc --go_out=./pb --go-grpc_out=./pb --proto_path=./proto --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative user/user.proto
@@ -32,11 +36,13 @@ message User {
   bool is_active = 5; //menandakan apakah pengguna aktif atau tidak
   Address address = 6; //menggunakan nested message Address
   repeated string educations = 7;
+  string spouse_name = 8; 
+  google.protobuf.Timestamp birth_date = 9; 
 }
 
 
 
-// response wrapper dari common/BaseResponse
+
 message CreateResponse {
-  common.BaseResponse base = 1;
+   common.BaseResponse base = 1; //menggunakan wrapper response dari common/BaseResponse
 }

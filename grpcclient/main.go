@@ -35,17 +35,16 @@ func main() {
 		// 	return
 		// }
 
-		log.Println("failed to send message ", err)
+		log.Println("Failed to send message ", err)
 		return
 	}
-	// wrap error handling
 	if !res.Base.IsSuccess {
 		if res.Base.StatusCode == 400 {
-			log.Println("there is validation error ", res.Base.message)
+			log.Println("There is validation error: ", res.Base.Message)
 		} else if res.Base.StatusCode == 500 {
-			log.Println("there is internal error ", res.Base.ResponseMessage)
+			log.Println("There is internal error: ", res.Base.Message)
 		}
 		return
 	}
-	log.Println("response from server ", res.Base.Message)
+	log.Println("Response from server ", res.Base.Message)
 }

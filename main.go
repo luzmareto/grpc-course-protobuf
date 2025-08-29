@@ -29,12 +29,10 @@ func (us *userService) CreateUser(ctx context.Context, userRequest *user.User) (
 			Base: &common.BaseResponse{
 				StatusCode: 400,
 				IsSuccess:  false,
-				Message:    "validation error: age must be greater than 0",
+				Message:    "Validation error",
 			},
 		}, nil
 	}
-	// membuat response server
-
 	log.Println("User is created")
 	return &user.CreateResponse{
 		Base: &common.BaseResponse{

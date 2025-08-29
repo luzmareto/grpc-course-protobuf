@@ -176,10 +176,9 @@ func (x *User) GetEducations() []string {
 	return nil
 }
 
-// response wrapper dari common/BaseResponse
 type CreateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *common.BaseResponse   `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.BaseResponse   `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"` //menggunakan wrapper response dari common/BaseResponse
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
