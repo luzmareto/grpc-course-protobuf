@@ -1,4 +1,4 @@
-module grp-course-protobuf
+module grpc-course-protobuf
 
 go 1.23.0
 

@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"grp-course-protobuf/pb/user"
+	"grpc-course-protobuf/pb/user"
 	"log"
 
 	"google.golang.org/grpc"

@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"errors"
-	"grp-course-protobuf/pb/chat"
-	"grp-course-protobuf/pb/common"
-	"grp-course-protobuf/pb/user"
+	"grpc-course-protobuf/pb/chat"
+	"grpc-course-protobuf/pb/common"
+	"grpc-course-protobuf/pb/user"
 	"io"
 	"log"
 	"net"
@@ -24,6 +24,7 @@ type userService struct {
 
 func (us *userService) CreateUser(ctx context.Context, userRequest *user.User) (*user.CreateResponse, error) {
 	// menggunakan wrapper response
+	log.Println("gagal melakukan daftar karena tidak mengisi kolom sesuai dengan keterangan")
 	if userRequest.Age < 1 {
 		return &user.CreateResponse{
 			Base: &common.BaseResponse{
